@@ -1,0 +1,144 @@
+– Consultas
+SELECT id_medicamento, nombre, presentacion, precio, categoria
+FROM medicamentos
+WHERE (nombre LIKE CONCAT('%', @texto, '%') OR descripcion LIKE CONCAT('%', @texto, '%'))
+  AND categoria IN ('Analgésicos', 'Antiinflamatorios', 'Antibióticos');
+
+SELECT id_inventario, id_medicamento, lote, existencia, fecha_caducidad
+FROM inventario
+WHERE existencia > @min_existencia
+  AND fecha_caducidad BETWEEN @fecha_inicio AND @fecha_fin;
+
+– Funciones
+-- Reporte de salidas (ventas y mermas) 
+SELECT 
+    UPPER(justificacion) AS tipo_salida,
+    DATE_FORMAT(fecha_salida, '%Y-%m') AS mes_operacion,
+    COUNT(id_salida) AS total_movimientos,
+    SUM(cantidad) AS unidades_totales,
+    CAST(AVG(cantidad) AS DECIMAL(10,2)) AS promedio_por_movimiento
+FROM salidas
+GROUP BY UPPER(justificacion), DATE_FORMAT(fecha_salida, '%Y-%m')
+HAVING SUM(cantidad) >= 10
+ORDER BY unidades_totales DESC, mes_operacion ASC;
+
+– Joins
+– Existencias de medicamento con datos
+SELECT 
+    i.id_inventario,
+    m.nombre AS medicamento,
+    m.presentacion,
+    m.categoria,
+    i.lote,
+    i.existencia,
+    i.fecha_caducidad,
+    m.precio
+FROM inventario i
+INNER JOIN medicamentos m ON i.id_medicamento = m.id_medicamento;
+
+– Historial de entradas al almacen
+SELECT 
+    e.id_entrada,
+    e.fecha_entrada,
+    m.nombre AS medicamento,
+    i.lote,
+    e.cantidad,
+    e.ubicacion_estanteria,
+    p.nombre AS proveedor,
+    CONCAT(per.nombre, ' ', per.apellido) AS recibido_por
+FROM entradas e
+INNER JOIN inventario i ON e.id_inventario = i.id_inventario
+INNER JOIN medicamentos m ON i.id_medicamento = m.id_medicamento
+INNER JOIN proveedores p ON e.id_proveedor = p.id_proveedor
+INNER JOIN personal per ON e.id_personal = per.id_personal;
+
+-- Salidas de farmacia
+SELECT 
+    s.id_salida,
+    s.fecha_salida,
+    m.nombre AS medicamento,
+    i.lote,
+    s.cantidad,
+    (s.cantidad * m.precio) AS monto_estimado,
+    s.justificacion,
+    CONCAT(per.nombre, ' ', per.apellido) AS atendido_por
+FROM salidas s
+INNER JOIN inventario i ON s.id_inventario = i.id_inventario
+INNER JOIN medicamentos m ON i.id_medicamento = m.id_medicamento
+INNER JOIN personal per ON s.id_personal = per.id_personal;
+
+-- Empleados y sallidas que registraron
+SELECT 
+    per.id_personal,
+    CONCAT(per.nombre, ' ', per.apellido) AS empleado,
+    per.puesto,
+    COUNT(s.id_salida) AS operaciones_realizadas,
+    COALESCE(SUM(s.cantidad), 0) AS piezas_despachadas
+FROM personal per
+LEFT JOIN salidas s ON per.id_personal = s.id_personal
+GROUP BY per.id_personal, per.nombre, per.apellido, per.puesto
+ORDER BY piezas_despachadas DESC;
+
+– Subconsultas
+--  Medicamentos donde el precio es superio al promedio
+SELECT id_medicamento, nombre, categoria, precio
+FROM medicamentos
+WHERE precio > (SELECT AVG(precio) FROM medicamentos)
+ORDER BY precio DESC;
+
+-- Lotes donde la existencia actual es menor al promedio de unidades vendidas del lote
+SELECT 
+    i.id_inventario,
+    m.nombre AS medicamento,
+    i.lote,
+    i.existencia
+FROM inventario i
+INNER JOIN medicamentos m ON i.id_medicamento = m.id_medicamento
+WHERE i.existencia < (
+    SELECT COALESCE(AVG(s.cantidad) * 5, 0)
+    FROM salidas s
+    WHERE s.id_inventario = i.id_inventario
+);
+
+– Vistas
+CREATE OR REPLACE VIEW vw_estado_inventario AS
+SELECT 
+    i.id_inventario,
+    m.nombre AS medicamento,
+    m.categoria,
+    i.lote,
+    i.existencia,
+    m.precio AS precio_unitario,
+    (i.existencia * m.precio) AS valor_total_lote,
+    i.fecha_caducidad,
+    DATEDIFF(i.fecha_caducidad, CURDATE()) AS dias_para_caducar
+FROM inventario i
+INNER JOIN medicamentos m ON i.id_medicamento = m.id_medicamento;
+
+CREATE OR REPLACE VIEW vw_resumen_proveedores AS
+SELECT 
+    p.id_proveedor,
+    p.nombre AS proveedor,
+    p.telefono,
+    COUNT(e.id_entrada) AS total_entregas,
+    COALESCE(SUM(e.cantidad), 0) AS total_unidades_surtidas,
+    MAX(e.fecha_entrada) AS ultima_entrega
+FROM proveedores p
+LEFT JOIN entradas e ON p.id_proveedor = e.id_proveedor
+GROUP BY p.id_proveedor, p.nombre, p.telefono;
+
+CREATE OR REPLACE VIEW vw_reporte_mermas AS
+SELECT 
+    s.id_salida,
+    s.fecha_salida,
+    m.nombre AS medicamento,
+    i.lote,
+    s.cantidad AS unidades_perdidas,
+    (s.cantidad * m.precio) AS perdida_economica,
+    s.justificacion,
+    CONCAT(per.nombre, ' ', per.apellido) AS responsable_registro
+FROM salidas s
+INNER JOIN inventario i ON s.id_inventario = i.id_inventario
+INNER JOIN medicamentos m ON i.id_medicamento = m.id_medicamento
+INNER JOIN personal per ON s.id_personal = per.id_personal
+WHERE s.justificacion LIKE '%Merma%';
