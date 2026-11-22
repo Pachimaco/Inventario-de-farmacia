@@ -61,6 +61,7 @@ create table entradas (
     id_personal int not null,
     cantidad int not null,
     fecha_entrada datetime default current_timestamp,
+    ubicacion_estanteria varchar(20) not null,
     foreign key (id_inventario)
         references inventario(id_inventario)
         on delete restrict
