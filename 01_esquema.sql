@@ -23,7 +23,11 @@ create table personal (
     nombre varchar(50) not null,
     apellido varchar(50) not null,
     puesto varchar(25) not null,
-    password varchar(30) not null
+    usuario varchar(30) not null unique,
+    password varchar(100) not null,
+    rol varchar(20) not null,
+    activo boolean not null default true,
+    constraint chk_rol check (rol in ('Administrador', 'Encargado'))
 );
 
 create table inventario (
