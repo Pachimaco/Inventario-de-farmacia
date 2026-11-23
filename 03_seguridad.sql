@@ -11,8 +11,13 @@ grant select, insert, update, delete on farmacia.medicamento_proveedor to 'rol_a
 grant select, insert, update, delete on farmacia.entradas to 'rol_administrador';
 grant select, insert, update, delete on farmacia.salidas to 'rol_administrador';
 
-grant select, insert, update, delete on farmacia.entradas to 'rol_encaralmacen';
-grant select, insert, update, delete on farmacia.salidas to 'rol_encaralmacen';
+grant select on farmacia.medicamentos to 'rol_encaralmacen';
+grant select on farmacia.proveedores to 'rol_encaralmacen';
+grant select on farmacia.personal to 'rol_encaralmacen';
+grant select on farmacia.inventario to 'rol_encaralmacen';
+
+grant select, insert, update on farmacia.entradas to 'rol_encaralmacen';
+grant select, insert, update on farmacia.salidas to 'rol_encaralmacen';
 
 create user if not exists 'admin'@'localhost' identified by 'admin';
 create user if not exists 'almacen'@'localhost' identified by 'almacen';
