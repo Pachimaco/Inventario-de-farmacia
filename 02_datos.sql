@@ -21,24 +21,22 @@ values
 ('Proveedora San Rafael', '6445566778', 'ventas@sanrafael.com', 'Av. Miguel Aleman 380');
 
 -- Personal
-insert into personal
-(nombre, apellido, puesto, password)
-values
-('Leyla Rodriguez', 'Soto', 'Administrador', 'leyla123'),
-('Ramon Arturo', 'Caballero Muñoz', 'Encargado', 'ramon123'),
-('Victor Abraham', 'Reyna Cantua', 'Farmaceutico', 'victor123'),
-('Maria Fernanda', 'Valenzuela Pacheco', 'Farmaceutico', 'maria123'),
-('Diego', 'Perez', 'Farmaceutico', 'diego123'),
-('Ana', 'Chavez', 'Auxiliar', 'ana123'),
-('Sol', 'Minjarez', 'Encargado', 'dol123'),
-('Daniel', 'Quintana', 'Auxiliar', 'daniel123'),
-('Luis', 'Valenzuela', 'Farmaceutico', 'luis123'),
-('Pedro', 'Armendariz', 'Auxiliar', 'pedro123'),
-('Miguel', 'Lopez', 'Farmaceutico', 'miguel123'),
-('Gabriela', 'Torres', 'Auxiliar', 'gabriela123'),
-('Eduardo', 'Navarro', 'Encargado', 'eduardo123'),
-('Fernanda', 'Jimenez', 'Farmaceutico', 'fer123'),
-('Ricardo', 'Sanchez', 'Auxiliar', 'ricardo123');
+insert into personal (nombre, apellido, puesto, usuario, password, rol, activo) values
+('Leyla Rodriguez', 'Soto', 'Administrador', 'leyla', 'leyla123', 'Administrador', true),
+('Ramon Arturo', 'Caballero Muñoz', 'Encargado', 'ramon', 'ramon123', 'Encargado', true),
+('Victor Abraham', 'Reyna Cantua', 'Farmaceutico', 'victor', 'victor123', 'Encargado', true),
+('Maria Fernanda', 'Valenzuela Pacheco', 'Farmaceutico', 'maria', 'maria123', 'Encargado', true),
+('Diego', 'Perez', 'Farmaceutico', 'diego', 'diego123', 'Encargado', true),
+('Ana', 'Chavez', 'Farmaceutico', 'ana', 'ana123', 'Encargado', true),
+('Sol', 'Minjarez', 'Farmaceutico', 'sol', 'sol123', 'Encargado', true),
+('Daniel', 'Quintana', 'Farmaceutico', 'daniel', 'daniel123', 'Encargado', true),
+('Luis', 'Valenzuela', 'Farmaceutico', 'luis', 'luis123', 'Encargado', true),
+('Pedro', 'Armendariz', 'Farmaceutico', 'pedro', 'pedro123', 'Encargado', true),
+('Miguel', 'Lopez', 'Farmaceutico', 'miguel', 'miguel123', 'Encargado', true),
+('Gabriela', 'Torres', 'Farmaceutico', 'gabriela', 'gaby123', 'Encargado', true),
+('Eduardo', 'Navarro', 'Farmaceutico', 'eduardo', 'eduardo123', 'Encargado', true),
+('Fernanda', 'Jimenez', 'Farmaceutico', 'fernanda', 'fer123', 'Encargado', true),
+('Ricardo', 'Sanchez', 'Farmaceutico', 'ricardo', 'ricardo123', 'Encargado', true);
 
 -- Medicamentos
 insert into medicamentos (nombre, descripcion, presentacion, precio, categoria) values
