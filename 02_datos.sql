@@ -110,3 +110,23 @@ insert into salidas (id_inventario, id_personal, cantidad, fecha_salida, justifi
 (13, 15, 8,  '2026-10-24 16:50:00', 'Venta en mostrador', 'Venta'),
 (14, 3, 25, '2026-10-25 17:15:00', 'Venta en mostrador', 'Venta'),
 (15, 4, 14, '2026-10-26 18:10:00', 'Venta en mostrador', 'Venta');
+
+-- Medicamento_proveedor o sea la tabla muchos a muchos
+insert into medicamento_proveedor
+(id_medicamento, id_proveedor, precio_compra)
+values
+(1, 1, 28.00),
+(2, 2, 42.00),
+(3, 3, 85.00),
+(4, 4, 20.00),
+(5, 5, 60.00),
+(6, 6, 38.00),
+(7, 7, 65.00),
+(8, 8, 105.00),
+(9, 9, 32.00),
+(10, 10, 40.00),
+(11, 11, 130.00),
+(12, 12, 50.00),
+(13, 13, 43.00),
+(14, 14, 18.00),
+(15, 15, 75.00);
