@@ -106,3 +106,7 @@ check (tipo_salida in (
     'Consumo interno',
     'Devolucion'
 ));
+
+alter table inventario
+add constraint chk_existencia
+check (existencia >= 0);
