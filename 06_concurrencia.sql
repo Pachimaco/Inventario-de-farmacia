@@ -41,4 +41,3 @@ select id_inventario, lote, existencia from inventario where id_inventario = 1;
 rollback;
 select id_inventario, lote, existencia from inventario where id_inventario = 1;
 -- Si todo salio bien en existencia debe de quedar 135
--- luego agrego mas comentacion para saber como funciona o preguntenle a chajepete
