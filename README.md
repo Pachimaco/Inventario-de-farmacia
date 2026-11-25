@@ -137,4 +137,4 @@ Este script es independiente de la instalación de la aplicación y puede ejecut
 # FIN
 Autores: Victor Abraham Reyna Cantua, Leyla Rodríguez Soto y María Fernanda Pacheco Valenzuela 
 
-(https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExa2wzZnduN24yY29xcHJzcW5hZTV1NDhocTl0YWFlN3hqYmFjaTRtbyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/lkbNG2zqzHZUA/giphy.gif)
+![Autores](https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExa2wzZnduN24yY29xcHJzcW5hZTV1NDhocTl0YWFlN3hqYmFjaTRtbyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/lkbNG2zqzHZUA/giphy.gif)
