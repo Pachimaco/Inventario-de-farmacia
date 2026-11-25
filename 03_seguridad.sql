@@ -32,6 +32,10 @@ create user if not exists 'admin'@'localhost' identified by 'admin';
 create user if not exists 'almacen'@'localhost' identified by 'almacen';
 create user if not exists 'auditor'@'localhost' identified by 'auditor';
 
+alter user 'admin'@'localhost' identified by 'admin';
+alter user 'almacen'@'localhost' identified by 'almacen';
+alter user 'auditor'@'localhost' identified by 'auditor';
+
 grant 'rol_administrador' to 'admin'@'localhost';
 grant 'rol_encaralmacen' to 'almacen'@'localhost';
 grant 'rol_consulta' to 'auditor'@'localhost';
@@ -48,6 +52,6 @@ grant execute on procedure farmacia.sp_consultar_existencia to 'rol_administrado
 grant select on farmacia.vw_estado_inventario to 'rol_administrador', 'rol_encaralmacen';
 grant select on farmacia.vw_resumen_proveedores to 'rol_administrador', 'rol_encaralmacen';
 grant select on farmacia.vw_reporte_mermas to 'rol_administrador', 'rol_encaralmacen';
-
+grant select, insert, update, delete on farmacia.medicamento_proveedor to 'rol_administrador'@'%';
 
 flush privileges;
