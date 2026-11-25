@@ -135,3 +135,6 @@ Por último, el 06_transacciones.sql es el que tiene los ejercicios para probar 
 Este script es independiente de la instalación de la aplicación y puede ejecutarse por separado para realizar las pruebas correspondientes, además, se debe considerar que modifica el contenido de algunas tablas.
 
 # FIN
+Autores: Victor Abraham Reyna Cantua, Leyla Rodríguez Soto y María Fernanda Pacheco Valenzuela 
+
+(https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExa2wzZnduN24yY29xcHJzcW5hZTV1NDhocTl0YWFlN3hqYmFjaTRtbyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/lkbNG2zqzHZUA/giphy.gif)
