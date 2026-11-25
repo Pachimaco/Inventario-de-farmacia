@@ -11,6 +11,10 @@ Esta aplicación fue creada con las siguientes herramientas:
 
 Sistema gestor de base de datos: MySQL
 
+Conector de base de datos: MySql.Data (ADO.NET)
+
+Administrador de base de datos: MySQL Workbench
+
 Entorno de desarrollo: Microsoft Visual Studio Community
 
 Marco de destino en MVSC: .NET 8.0
@@ -18,10 +22,6 @@ Marco de destino en MVSC: .NET 8.0
 Lenguaje de programación: C#.
 
 Interfaz gráfica: Windows Forms
-
-Conector de base de datos: MySql.Data (ADO.NET)
-
-Administrador de base de datos: MySQL Workbench
 
 ### Pasos para crear la base de datos
 
