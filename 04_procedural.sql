@@ -6,7 +6,8 @@ delimiter $$
 drop function if exists fn_estado_caducidad$$
 create function fn_estado_caducidad(p_fecha date)
 returns varchar(20)
-not deterministic -- ps aqui le pusimos eso porque usa curdate entonces va a estar en cambio dependiendo de la fecha del sistema
+not deterministic -- ps aqui es not deterministic y no sql porque con el curdate cambia a cada rato y el no sql ps porque no hace consultas ni edita tablas
+no sql
 begin
     if p_fecha < curdate() then
         return 'CADUCADO';
@@ -41,7 +42,7 @@ begin
     declare v_valor decimal(12,2);
 
     select coalesce(sum(i.existencia * m.precio), 0)
-    into v_valor
+    into v_valorsp_login
     from inventario i
     inner join medicamentos m
         on i.id_medicamento = m.id_medicamento
