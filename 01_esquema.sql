@@ -22,7 +22,7 @@ create table personal (
     id_personal int auto_increment primary key,
     nombre varchar(50) not null,
     apellido varchar(50) not null,
-    puesto varchar(25) not null,
+    puesto varchar(40) not null,
     usuario varchar(30) not null unique,
     password varchar(100) not null,
     rol varchar(20) not null,
@@ -57,6 +57,8 @@ create table medicamento_proveedor (
         on delete restrict
         on update cascade
 );
+
+
 
 create table entradas (
     id_entrada int auto_increment primary key,
@@ -110,3 +112,21 @@ check (tipo_salida in (
 alter table inventario
 add constraint chk_existencia
 check (existencia >= 0);
+
+alter table personal
+drop check chk_rol;
+
+alter table personal
+add constraint chk_rol
+check (rol in ('Administrador', 'Encargado', 'Consulta'));
+
+alter table personal
+add constraint chk_puesto
+check (puesto in (
+    'Administrador',
+    'Encargado',
+    'Vendedor',
+    'Farmaceutico',
+    'Auxiliar'
+));
+
