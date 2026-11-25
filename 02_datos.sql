@@ -130,3 +130,7 @@ values
 (13, 13, 43.00),
 (14, 14, 18.00),
 (15, 15, 75.00);
+
+update personal
+set rol = 'Consulta'
+where usuario = 'maria';
