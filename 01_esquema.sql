@@ -1,6 +1,13 @@
 create database farmacia;
 use farmacia;
 
+-- justificacion de las FK:
+-- on delete restrict: no se puede borrar un medicamento, proveedor, empleado o lote que ya
+--   tenga movimientos (entradas/salidas), porque se perderia el historial del inventario.
+--   Para "dar de baja" personal se usa la columna activo en vez de borrar.
+-- on update cascade: si cambia un id, el cambio se propaga a las tablas hijas
+--   para que no queden movimientos huerfanos.
+
 create table medicamentos (
     id_medicamento int auto_increment primary key,
     nombre varchar(80) not null,
