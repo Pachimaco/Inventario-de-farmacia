@@ -41,3 +41,20 @@ select id_inventario, lote, existencia from inventario where id_inventario = 1;
 rollback;
 select id_inventario, lote, existencia from inventario where id_inventario = 1;
 -- Si todo salio bien en existencia debe de quedar 135
+
+
+-- Transaccion de varias tablas con rollback automatico por error
+-- sp_alta_medicamento inserta en medicamentos, inventario y medicamento_proveedor.
+-- Aqui el proveedor 999 no existe -> falla la FK en el 3er insert -> el handler hace rollback
+-- y el medicamento y el lote que ya se habian insertado se deshacen.
+call sp_alta_medicamento('Cetirizina', 'Antihistaminico', 'Caja con 10 tabletas 10mg',
+     40.00, 'Antialérgicos', 'LOTE-CET-16', '2028-03-01', 999, 22.00, @id_nuevo);
+-- (marca error 1452 de FK, es lo esperado)
+select count(*) as debe_ser_cero from medicamentos where nombre = 'Cetirizina';
+
+-- La misma operacion con un proveedor valido si hace commit en las 3 tablas
+call sp_alta_medicamento('Cetirizina', 'Antihistaminico', 'Caja con 10 tabletas 10mg',
+     40.00, 'Antialérgicos', 'LOTE-CET-16', '2028-03-01', 4, 22.00, @id_nuevo);
+select @id_nuevo as id_medicamento_nuevo;
+select * from inventario where id_medicamento = @id_nuevo;
+select * from medicamento_proveedor where id_medicamento = @id_nuevo;

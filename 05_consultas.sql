@@ -1,5 +1,11 @@
 use farmacia;
 
+-- valores de ejemplo (en la app estos vienen de los filtros de la pantalla como parametros)
+set @texto = 'an';
+set @min_existencia = 50;
+set @fecha_inicio = '2027-01-01';
+set @fecha_fin = '2027-12-31';
+
 -- consultas con filtros
 select id_medicamento, nombre, presentacion, precio, categoria
 from medicamentos
@@ -124,6 +130,31 @@ where i.existencia < (
 );
 
 
+-- operadores set (union)
+-- kardex: todos los movimientos de un lote (entradas y salidas juntas) ordenados por fecha
+select 'ENTRADA' as movimiento, e.id_inventario, e.fecha_entrada as fecha, e.cantidad
+from entradas e
+union all
+select 'SALIDA', s.id_inventario, s.fecha_salida, -s.cantidad
+from salidas s
+order by id_inventario, fecha;
+
+-- medicamentos que tienen entradas O salidas registradas (union quita duplicados)
+select i.id_medicamento from entradas e inner join inventario i on e.id_inventario = i.id_inventario
+union
+select i.id_medicamento from salidas s inner join inventario i on s.id_inventario = i.id_inventario;
+
+
+-- uso de las funciones en un reporte
+select
+    m.id_medicamento,
+    m.nombre,
+    fn_existencia_total(m.id_medicamento) as existencia_total,
+    fn_valor_inventario(m.id_medicamento) as valor_inventario
+from medicamentos m
+order by valor_inventario desc;
+
+
 -- vistas
 create or replace view vw_estado_inventario as
 select
@@ -135,7 +166,8 @@ select
     m.precio as precio_unitario,
     (i.existencia * m.precio) as valor_total_lote,
     i.fecha_caducidad,
-    datediff(i.fecha_caducidad, curdate()) as dias_para_caducar
+    datediff(i.fecha_caducidad, curdate()) as dias_para_caducar,
+    fn_estado_caducidad(i.fecha_caducidad) as estado_caducidad
 from inventario i
 inner join medicamentos m
     on i.id_medicamento = m.id_medicamento;

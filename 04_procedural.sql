@@ -42,7 +42,7 @@ begin
     declare v_valor decimal(12,2);
 
     select coalesce(sum(i.existencia * m.precio), 0)
-    into v_valorsp_login
+    into v_valor
     from inventario i
     inner join medicamentos m
         on i.id_medicamento = m.id_medicamento
@@ -142,7 +142,79 @@ begin
     where id_inventario = p_id_inventario;
 end$$
 
-  
+
+-- Alta de un medicamento nuevo con su primer lote y su proveedor
+-- es una operacion de negocio que afecta 3 tablas (medicamentos, inventario y medicamento_proveedor)
+-- si algo falla (proveedor que no existe, precio negativo, etc) se hace rollback de todo
+drop procedure if exists sp_alta_medicamento$$
+
+create procedure sp_alta_medicamento(
+    in p_nombre varchar(80),
+    in p_descripcion varchar(100),
+    in p_presentacion varchar(50),
+    in p_precio decimal(10,2),
+    in p_categoria varchar(50),
+    in p_lote varchar(50),
+    in p_fecha_caducidad date,
+    in p_id_proveedor int,
+    in p_precio_compra decimal(10,2),
+    out p_id_medicamento int
+)
+begin
+    declare exit handler for sqlexception
+    begin
+        rollback;
+        set p_id_medicamento = null;
+        resignal;
+    end;
+
+    if p_precio <= 0 or p_precio_compra <= 0 then
+        signal sqlstate '45000'
+        set message_text = 'los precios deben ser mayores a cero';
+    end if;
+
+    start transaction;
+
+    insert into medicamentos (nombre, descripcion, presentacion, precio, categoria)
+    values (p_nombre, p_descripcion, p_presentacion, p_precio, p_categoria);
+
+    set p_id_medicamento = last_insert_id();
+
+    insert into inventario (id_medicamento, lote, existencia, fecha_caducidad)
+    values (p_id_medicamento, p_lote, 0, p_fecha_caducidad);
+
+    insert into medicamento_proveedor (id_medicamento, id_proveedor, precio_compra)
+    values (p_id_medicamento, p_id_proveedor, p_precio_compra);
+
+    commit;
+end$$
+
+
+-- Reporte de caducidad: usa las 3 funciones para armar el reporte
+-- p_dias = cuantos dias hacia adelante revisar (ej. 90)
+drop procedure if exists sp_reporte_caducidad$$
+
+create procedure sp_reporte_caducidad(
+    in p_dias int
+)
+begin
+    select
+        i.id_inventario,
+        m.nombre as medicamento,
+        i.lote,
+        i.existencia,
+        i.fecha_caducidad,
+        fn_estado_caducidad(i.fecha_caducidad) as estado,
+        fn_existencia_total(m.id_medicamento) as existencia_total_medicamento,
+        fn_valor_inventario(m.id_medicamento) as valor_total_medicamento
+    from inventario i
+    inner join medicamentos m
+        on i.id_medicamento = m.id_medicamento
+    where i.fecha_caducidad <= date_add(curdate(), interval p_dias day)
+    order by i.fecha_caducidad asc;
+end$$
+
+
 -- triggers
 -- Validar entradas
 drop trigger if exists trg_validar_entrada$$
